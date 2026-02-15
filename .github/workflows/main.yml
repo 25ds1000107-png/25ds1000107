@@ -1,0 +1,75 @@
+name: Cache Demo
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  cache-demo:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Cache dependencies
+        id: cache-8fe94d0
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/my-deps
+          key: cache-8fe94d0
+          
+      - name: prime-cache-8fe94d0
+        run: |
+          if [ "${{ steps.cache-8fe94d0.outputs.cache-hit }}" == "true" ]; then
+            echo "🎉 Cache HIT! Found the cache!"
+          else
+            echo "❌ Cache MISS! Creating new cache..."
+            mkdir -p ~/.cache/my-deps
+            echo "Some cached data" > ~/.cache/my-deps/data.txt
+          fi
+```
+
+### **Step 4: Save It**
+1. Click the green **"Commit changes"** button
+2. Click **"Commit changes"** again in the popup
+
+### **Step 5: Watch It Run!**
+1. Click on **"Actions"** tab
+2. You'll see your workflow running! Click on it
+3. Click on the job name "cache-demo"
+4. Watch the magic happen! ✨
+
+### **Step 6: Run It Again**
+1. Go to **"Actions"** tab
+2. Click your workflow name on the left
+3. Click **"Run workflow"** button (on the right)
+4. Click green **"Run workflow"** button
+5. This time you should see "🎉 Cache HIT!"
+
+---
+
+## 🤔 Understanding the Parts
+
+**What NOT to cache:**
+Be mindful that overly specific cache keys may result in missed cache hits . Don't cache things that change every second!
+
+**How to control it:**
+- The `key` is like a name tag - GitHub uses it to find your cache
+- The `path` tells GitHub what folder to save
+- Keys have a maximum length of 512 characters 
+
+**How to "bust" (delete) the cache:**
+You can invalidate caches by updating the cache key value . Just change the key name (like from "cache-8fe94d0" to "cache-NEW") and it'll create a fresh one!
+
+**Common issues:**
+Sometimes caches can get stuck due to race conditions when multiple jobs try to use the same cache . If this happens, just change your cache key slightly!
+
+---
+
+## 🎓 What You Need to Share
+
+After running your workflow **twice** (so the cache works the second time), share your repository URL like:
+```
+https://github.com/YOUR-USERNAME/YOUR-REPO-NAME
